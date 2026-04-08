@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Rico Gym - Admin Login</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#259df4',
+            dark: '#0f172a',
+            surface: '#1e293b',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          borderRadius: {
+            'custom': '8px',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glow-primary {
+      box-shadow: 0 0 15px rgba(37, 157, 244, 0.3);
+    }
+    body {
+      background-color: #0f172a;
+    }
+  </style>
+</head>
+<body class="h-full font-sans antialiased text-slate-200">
+
+  <main class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+
+    <!-- Brand Logo -->
+    <div class="mb-8 text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary mb-4 glow-primary">
+        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" stroke-linecap="round"
+          stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="m6.5 6.5 11 11"></path>
+          <path d="m21 21-1-1"></path>
+          <path d="m3 3 1 1"></path>
+          <path d="m18 22 4-4"></path>
+          <path d="m2 6 4-4"></path>
+          <path d="m3 10 8 8"></path>
+          <path d="m13 6 8 8"></path>
+        </svg>
+      </div>
+      <h1 class="text-3xl font-bold tracking-tight text-white">Rico Gym</h1>
+      <p class="text-slate-400 mt-2">Admin Login Portal</p>
+    </div>
+
+    <!-- Login Card -->
+    <!-- action="/login" sends form data to Flask's login route -->
+    <!-- method="POST" tells Flask this is a form submission -->
+    <div class="w-full max-w-md bg-surface border border-slate-700 p-8 rounded-custom shadow-2xl">
+      <form action="/login" method="POST" class="space-y-6">
+
+        <!-- Username Field -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-slate-300" for="username">Username</label>
+          <input
+            class="block w-full px-4 py-3 rounded-custom bg-dark border-slate-600 text-white placeholder-slate-500 focus:ring-primary focus:border-primary transition-colors"
+            id="username"
+            name="username"
+            placeholder="Enter admin username"
+            required
+            type="text"
+          />
+        </div>
+
+        <!-- Password Field -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-slate-300" for="password">Password</label>
+          <input
+            class="block w-full px-4 py-3 rounded-custom bg-dark border-slate-600 text-white placeholder-slate-500 focus:ring-primary focus:border-primary transition-colors"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            required
+            type="password"
+          />
+        </div>
+
+        <!-- Error Message — only shows when Flask passes an error -->
+        {% if error %}
+        <div class="bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium px-4 py-3 rounded-lg">
+          {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Submit Button -->
+        <button
+          class="w-full py-3 px-4 bg-primary hover:bg-blue-600 text-white font-semibold rounded-custom transition duration-200 ease-in-out transform active:scale-[0.98] glow-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-dark"
+          type="submit">
+          Sign In
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Back to Check-In link — href changed from # to / -->
+    <div class="mt-8 text-center">
+      <a class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="/">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        </svg>
+        Back to Check-In
+      </a>
+    </div>
+
+  </main>
+
+</body>
+</html>

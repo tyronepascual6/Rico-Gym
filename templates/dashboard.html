@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Rico Gym - Owner Dashboard</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#259df4",
+            "background-light": "#f5f7f8",
+            "background-dark": "#101a22",
+          },
+          fontFamily: { "display": ["Inter"] },
+          borderRadius: {
+            "DEFAULT": "0.5rem", "lg": "0.5rem",
+            "xl": "0.75rem", "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<div class="flex h-full grow flex-col">
+
+  <!-- ==================== -->
+  <!-- STICKY HEADER        -->
+  <!-- ==================== -->
+  <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-6 py-4 bg-background-light dark:bg-background-dark sticky top-0 z-50">
+    <div class="flex items-center gap-4">
+      <div class="flex items-center justify-center rounded bg-primary p-1 text-white">
+        <span class="material-symbols-outlined text-2xl">fitness_center</span>
+      </div>
+      <div>
+        <h2 class="text-xl font-bold leading-tight tracking-tight">Rico Gym</h2>
+        <span class="text-[10px] font-black uppercase tracking-widest text-primary leading-none">Admin Console</span>
+      </div>
+    </div>
+    <div class="flex flex-1 justify-end gap-6 items-center">
+      <div class="hidden md:flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+        <span class="material-symbols-outlined text-xl">calendar_today</span>
+        <span id="header-date"></span>
+      </div>
+      <div class="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
+      <a href="/logout"
+        class="flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold transition-opacity hover:opacity-90">
+        <span class="material-symbols-outlined mr-2 text-lg">logout</span>
+        Logout
+      </a>
+    </div>
+  </header>
+
+  <!-- =========== -->
+  <!-- MAIN CONTENT -->
+  <!-- =========== -->
+  <main class="flex-1 p-6 max-w-[1440px] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Page Title -->
+    <div class="lg:col-span-12 flex flex-col gap-2 mb-2">
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-bold rounded uppercase tracking-tighter">Owner Access</span>
+        <h1 class="text-3xl font-black tracking-tight">Executive Dashboard</h1>
+      </div>
+      <p class="text-slate-500 dark:text-slate-400">
+        Welcome back, Kuya Rico. Here's your gym's performance overview.
+        {% if reset_date %}
+        <span class="text-xs text-slate-600 dark:text-slate-500 ml-2">
+          Last reset: {{ reset_date.strftime('%b %d, %Y at %I:%M %p') }}
+        </span>
+        {% endif %}
+      </p>
+    </div>
+
+    <!-- ==================== -->
+    <!-- EARNINGS CARDS ROW   -->
+    <!-- ==================== -->
+    <div class="lg:col-span-12">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <!-- Today's Earnings -->
+        <div class="flex flex-col gap-3 rounded-xl p-6 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+          <div class="absolute -right-4 -top-4 text-primary/5 group-hover:text-primary/10 transition-colors">
+            <span class="material-symbols-outlined text-8xl">payments</span>
+          </div>
+          <div class="flex justify-between items-start relative z-10">
+            <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Earnings Today</p>
+            <span class="material-symbols-outlined text-primary text-xl">today</span>
+          </div>
+          <p class="text-3xl font-black tracking-tight relative z-10">₱{{ daily_earnings }}</p>
+          <p class="text-slate-400 text-xs font-semibold flex items-center gap-1 relative z-10">
+            <span class="material-symbols-outlined text-sm">people</span>
+            {{ daily_count }} check-ins today
+          </p>
+        </div>
+
+        <!-- Weekly Earnings -->
+        <div class="flex flex-col gap-3 rounded-xl p-6 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+          <div class="absolute -right-4 -top-4 text-primary/5 group-hover:text-primary/10 transition-colors">
+            <span class="material-symbols-outlined text-8xl">equalizer</span>
+          </div>
+          <div class="flex justify-between items-start relative z-10">
+            <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Weekly Revenue</p>
+            <span class="material-symbols-outlined text-primary text-xl">date_range</span>
+          </div>
+          <p class="text-3xl font-black tracking-tight relative z-10">₱{{ weekly_earnings }}</p>
+          <p class="text-slate-400 text-xs font-semibold relative z-10">Last 7 days</p>
+        </div>
+
+        <!-- Monthly Earnings -->
+        <div class="flex flex-col gap-3 rounded-xl p-6 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+          <div class="absolute -right-4 -top-4 text-primary/5 group-hover:text-primary/10 transition-colors">
+            <span class="material-symbols-outlined text-8xl">calendar_month</span>
+          </div>
+          <div class="flex justify-between items-start relative z-10">
+            <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Monthly Total</p>
+            <span class="material-symbols-outlined text-primary text-xl">analytics</span>
+          </div>
+          <p class="text-3xl font-black tracking-tight relative z-10">₱{{ monthly_earnings }}</p>
+          <p class="text-slate-400 text-xs font-semibold relative z-10">Last 30 days</p>
+        </div>
+
+        <!-- Annual Earnings -->
+        <div class="flex flex-col gap-3 rounded-xl p-6 bg-primary text-white shadow-xl relative overflow-hidden group">
+          <div class="absolute -right-4 -top-4 text-white/10 group-hover:text-white/20 transition-colors">
+            <span class="material-symbols-outlined text-8xl">account_balance</span>
+          </div>
+          <div class="flex justify-between items-start relative z-10">
+            <p class="text-white/80 text-xs font-bold uppercase tracking-wider">Annual Total</p>
+            <span class="material-symbols-outlined text-white text-xl">show_chart</span>
+          </div>
+          <p class="text-3xl font-black tracking-tight relative z-10">₱{{ annual_earnings }}</p>
+          <p class="text-white/80 text-xs font-semibold relative z-10">This year</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- LEFT COLUMN          -->
+    <!-- ==================== -->
+    <div class="lg:col-span-8 flex flex-col gap-6">
+
+      <!-- Revenue Bar Chart -->
+      <div class="rounded-xl p-6 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h3 class="text-lg font-bold">Daily Check-ins (Last 7 Days)</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Number of check-ins per day</p>
+          </div>
+        </div>
+        <div class="grid h-64 grid-flow-col gap-4 grid-rows-[1fr_auto] items-end justify-items-center">
+          {% for day in weekly_chart %}
+          <div
+            class="bg-primary/20 hover:bg-primary transition-all rounded w-full max-w-[40px]"
+            style="height: {{ [day.count * 10, 100] | min }}%; min-height: 4px;"
+            title="{{ day.day }}: {{ day.count }} check-ins — ₱{{ day.earnings }}">
+          </div>
+          <p class="text-slate-500 text-[11px] font-bold uppercase mt-2">{{ day.day }}</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Today's Attendance Table -->
+      <div class="rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-center">
+          <div class="flex flex-col">
+            <h3 class="font-bold flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary">monitoring</span>
+              Today's Check-in Log
+            </h3>
+            <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Real-time Facility Logs</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-bold text-emerald-500 uppercase">Live</span>
+            <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
+                <th class="px-4 py-3 font-medium">Name</th>
+                <th class="px-4 py-3 font-medium">Type</th>
+                <th class="px-4 py-3 font-medium">Check-in Time</th>
+                <th class="px-4 py-3 font-medium text-right">Fee</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+              {% for log in todays_logs %}
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                <td class="px-4 py-3 font-semibold">{{ log.name }}</td>
+                <td class="px-4 py-3">
+                  {% if log.member_id %}
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
+                    Member
+                  </span>
+                  {% else %}
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-500">
+                    Walk-in
+                  </span>
+                  {% endif %}
+                </td>
+                <td class="px-4 py-3 text-slate-500">{{ log.time_in.strftime('%I:%M %p') }}</td>
+                <td class="px-4 py-3 text-right font-bold text-primary">₱{{ log.fee }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="4" class="px-4 py-8 text-center text-slate-400 text-sm">
+                  No check-ins yet today.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== -->
+    <!-- RIGHT COLUMN         -->
+    <!-- ==================== -->
+    <div class="lg:col-span-4 flex flex-col gap-6">
+
+      <!-- Quick Check-in Panel -->
+      <div class="rounded-xl p-6 bg-primary shadow-lg text-white">
+        <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+          <span class="material-symbols-outlined">login</span>
+          Quick Check-In
+        </h3>
+        <p class="text-white/80 text-sm mb-6">Enter a name for instant check-in.</p>
+        <form action="/" method="POST">
+          <div class="relative">
+            <input
+              name="name"
+              class="w-full bg-white/20 border-white/30 text-white placeholder-white/60 rounded-lg py-3 pl-4 pr-12 focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all outline-none"
+              placeholder="Enter member name..."
+              type="text"
+              required
+            />
+            <button type="submit"
+              class="absolute right-2 top-2 p-1 bg-white text-primary rounded-md shadow hover:bg-slate-100 transition-colors">
+              <span class="material-symbols-outlined">send</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Management Actions -->
+      <div class="rounded-xl p-6 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <h3 class="font-bold mb-4">Management</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <a href="/register"
+            class="flex flex-col items-center justify-center p-4 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-primary/50 transition-all group">
+            <span class="material-symbols-outlined text-primary mb-2 group-hover:scale-110 transition-transform">person_add</span>
+            <span class="text-xs font-bold uppercase text-center">Add Member</span>
+          </a>
+          <a href="/members"
+            class="flex flex-col items-center justify-center p-4 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-primary/50 transition-all group">
+            <span class="material-symbols-outlined text-primary mb-2 group-hover:scale-110 transition-transform">group</span>
+            <span class="text-xs font-bold uppercase text-center">Members</span>
+          </a>
+          <a href="/"
+            class="flex flex-col items-center justify-center p-4 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-primary/50 transition-all group">
+            <span class="material-symbols-outlined text-primary mb-2 group-hover:scale-110 transition-transform">how_to_reg</span>
+            <span class="text-xs font-bold uppercase text-center">Check-in</span>
+          </a>
+          <a href="/logout"
+            class="flex flex-col items-center justify-center p-4 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-primary/50 transition-all group">
+            <span class="material-symbols-outlined text-primary mb-2 group-hover:scale-110 transition-transform">logout</span>
+            <span class="text-xs font-bold uppercase text-center">Logout</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Today at a Glance -->
+      <div class="rounded-xl p-6 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <h3 class="font-bold mb-4">Today at a Glance</h3>
+        <div class="flex flex-col gap-4">
+          <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+            <span class="text-sm text-slate-500">Total check-ins</span>
+            <span class="font-black text-lg">{{ daily_count }}</span>
+          </div>
+          <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+            <span class="text-sm text-slate-500">Revenue today</span>
+            <span class="font-black text-lg text-primary">₱{{ daily_earnings }}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-slate-500">Rate per visit</span>
+            <span class="font-black text-lg">₱50</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== -->
+      <!-- RESET EARNINGS CARD  -->
+      <!-- ==================== -->
+      <div class="rounded-xl p-6 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <h3 class="font-bold mb-1">Reset Earnings</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+          Clears all counters without deleting data. Old sessions are always preserved.
+        </p>
+        {% if reset_date %}
+        <p class="text-xs text-slate-500 mb-4">
+          Last reset: <span class="text-slate-300">{{ reset_date.strftime('%b %d, %Y at %I:%M %p') }}</span>
+        </p>
+        {% endif %}
+        <button
+          onclick="document.getElementById('reset-modal').classList.remove('hidden')"
+          class="w-full py-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-bold uppercase tracking-widest hover:bg-red-500/20 transition-colors">
+          Reset All Earnings
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ====== -->
+  <!-- FOOTER -->
+  <!-- ====== -->
+  <footer class="mt-auto p-6 text-center text-slate-500 dark:text-slate-400 text-sm border-t border-slate-200 dark:border-slate-800">
+    © 2026 Rico Gym Management System | Administrative Access Only
+  </footer>
+
+</div>
+</div>
+
+<!-- ========================== -->
+<!-- RESET CONFIRMATION MODAL   -->
+<!-- Hidden by default          -->
+<!-- ========================== -->
+<div id="reset-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 max-w-sm w-full shadow-2xl">
+    <div class="flex flex-col items-center text-center">
+      <div class="size-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-red-400 text-4xl">warning</span>
+      </div>
+      <h3 class="text-xl font-black mb-2">Reset Earnings?</h3>
+      <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+        All earnings counters will reset to zero. Your check-in history is
+        <span class="text-white font-bold">never deleted</span> — this only affects what's counted going forward.
+      </p>
+      <div class="flex gap-3 w-full">
+        <!-- Cancel hides the modal -->
+        <button
+          onclick="document.getElementById('reset-modal').classList.add('hidden')"
+          class="flex-1 py-3 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 transition-colors">
+          Cancel
+        </button>
+        <!-- Confirm posts to the reset route in Flask -->
+        <form action="/reset-earnings" method="POST" class="flex-1">
+          <button type="submit"
+            class="w-full py-3 rounded-lg bg-red-500 text-white font-bold text-sm hover:bg-red-600 transition-colors">
+            Yes, Reset
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================== -->
+<!-- LIVE DATE SCRIPT   -->
+<!-- ================== -->
+<script>
+  const now = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('header-date').textContent = now.toLocaleDateString('en-US', options);
+</script>
+
+</body>
+</html>
