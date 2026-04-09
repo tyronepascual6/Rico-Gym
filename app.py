@@ -1,13 +1,37 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, session
 from models import db, Member, Session as GymSession, Settings
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
 import random
 import string
 
+# =====================
+# LOAD ENVIRONMENT VARS
+# =====================
+# Reads from .env file locally
+# On Render, reads from the environment variables you set in the dashboard
+load_dotenv()
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+
+# =====================
+# DATABASE CONFIGURATION
+# =====================
+# Reads DATABASE_URL from .env locally or from Render's environment variables
+# On Render this will be the PostgreSQL URL they provide
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///database.db')
+
+# Render's PostgreSQL URL starts with "postgres://" but SQLAlchemy
+# requires "postgresql://" — this line fixes that automatically
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'ricogym2024'
+
+# Reads SECRET_KEY from environment — never hardcoded
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ricogym2024')
 
 db.init_app(app)
 
@@ -60,7 +84,10 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        if username == 'admin' and password == 'ricogym2026':
+        # Reads admin password from environment variable
+        admin_password = os.environ.get('ADMIN_PASSWORD', 'ricogym2024')
+
+        if username == 'admin' and password == admin_password:
             session['logged_in'] = True
             return redirect(url_for('dashboard'))
         else:
@@ -116,7 +143,6 @@ def dashboard():
 
     reset_date  = get_reset_date()
 
-    # If a reset date exists use whichever is later
     effective_today = max(today_start, reset_date) if reset_date else today_start
     effective_week  = max(week_start,  reset_date) if reset_date else week_start
     effective_month = max(month_start, reset_date) if reset_date else month_start
@@ -141,7 +167,6 @@ def dashboard():
         day     = today_start - timedelta(days=i)
         day_end = day + timedelta(days=1)
 
-        # Respect reset date in chart too
         effective_day = max(day, reset_date) if reset_date else day
 
         count = GymSession.query.filter(
