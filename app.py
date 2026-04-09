@@ -1,4 +1,5 @@
 import os
+import pytz
 from flask import Flask, render_template, request, redirect, url_for, session
 from models import db, Member, Session as GymSession, Settings
 from datetime import datetime, timedelta
@@ -9,8 +10,6 @@ import string
 # =====================
 # LOAD ENVIRONMENT VARS
 # =====================
-# Reads from .env file locally
-# On Render, reads from the environment variables you set in the dashboard
 load_dotenv()
 
 app = Flask(__name__)
@@ -18,25 +17,29 @@ app = Flask(__name__)
 # =====================
 # DATABASE CONFIGURATION
 # =====================
-# Reads DATABASE_URL from .env locally or from Render's environment variables
-# On Render this will be the PostgreSQL URL they provide
 database_url = os.environ.get('DATABASE_URL', 'sqlite:///database.db')
 
-# Render's PostgreSQL URL starts with "postgres://" but SQLAlchemy
-# requires "postgresql://" — this line fixes that automatically
 if database_url.startswith('postgres://'):
     database_url = database_url.replace('postgres://', 'postgresql://', 1)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Reads SECRET_KEY from environment — never hardcoded
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'ricogym2024')
 
 db.init_app(app)
 
 with app.app_context():
     db.create_all()
+
+
+# =====================
+# PHILIPPINE TIME HELPER
+# Always use this instead of datetime.now()
+# Philippines is UTC+8 — Render servers run on UTC
+# =====================
+def ph_time():
+    ph_tz = pytz.timezone('Asia/Manila')
+    return datetime.now(ph_tz).replace(tzinfo=None)
 
 
 # =====================
@@ -84,7 +87,6 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        # Reads admin password from environment variable
         admin_password = os.environ.get('ADMIN_PASSWORD', 'ricogym2024')
 
         if username == 'admin' and password == admin_password:
@@ -134,7 +136,8 @@ def get_reset_date():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    now = datetime.now()
+    # Use Philippine time for all date calculations
+    now = ph_time()
 
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
     week_start  = today_start - timedelta(days=7)
@@ -198,7 +201,8 @@ def dashboard():
 @app.route('/reset-earnings', methods=['POST'])
 @login_required
 def reset_earnings():
-    now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    # Use Philippine time for reset timestamp
+    now_str = ph_time().strftime('%Y-%m-%d %H:%M:%S')
     setting = Settings.query.filter_by(key='earnings_reset_date').first()
 
     if setting:
