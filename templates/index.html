@@ -31,7 +31,6 @@
 
   <!-- ===================== -->
   <!-- SUCCESS MODAL OVERLAY -->
-  <!-- Only shows after a successful check-in -->
   <!-- ===================== -->
   {% if success_name %}
   <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-sm">
@@ -68,9 +67,17 @@
     <div class="flex items-center gap-4">
       <div class="hidden md:flex flex-col items-end">
         <span class="text-xs font-semibold text-slate-500 uppercase tracking-widest">Gym Status</span>
-        <!-- Status span — JavaScript fills this in dynamically -->
         <span id="gym-status" class="text-sm font-bold flex items-center gap-1"></span>
       </div>
+
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullscreen()"
+        id="fullscreen-btn"
+        title="Toggle Fullscreen"
+        class="bg-slate-200 dark:bg-slate-800 hover:bg-primary/20 p-2 rounded-lg transition-colors border border-slate-300 dark:border-slate-700">
+        <span id="fullscreen-icon" class="material-symbols-outlined text-xl">fullscreen</span>
+      </button>
+
       <a href="/login"
         class="bg-slate-200 dark:bg-slate-800 hover:bg-primary/20 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-lg transition-colors border border-slate-300 dark:border-slate-700">
         Admin Login
@@ -82,6 +89,60 @@
   <!-- MAIN CONTENT -->
   <!-- =========== -->
   <main class="flex-1 flex flex-col items-center justify-center px-4 py-12 max-w-4xl mx-auto w-full">
+
+    {% if show_pin_screen %}
+    <!-- =================== -->
+    <!-- PIN SCREEN          -->
+    <!-- Shows before check-in form -->
+    <!-- =================== -->
+    <div class="text-center mb-12">
+      <div class="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
+        <span class="material-symbols-outlined text-primary text-4xl">lock</span>
+      </div>
+      <h1 class="text-3xl lg:text-4xl font-black tracking-tight">Authorized Access Only</h1>
+      <p class="text-slate-500 dark:text-slate-400 mt-3 text-lg">Enter the staff PIN to access the check-in system.</p>
+    </div>
+
+    <!-- PIN Error Message -->
+    {% if pin_error %}
+    <div class="w-full max-w-sm mb-6">
+      <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-center gap-3">
+        <span class="material-symbols-outlined text-red-400">error</span>
+        <p class="text-red-400 text-sm font-medium">{{ pin_error }}</p>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- PIN Entry Form -->
+    <!-- action="/verify-pin" sends PIN to Flask for validation -->
+    <form action="/verify-pin" method="POST" class="w-full max-w-sm space-y-4">
+      <div class="relative">
+        <div class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400">
+          <span class="material-symbols-outlined text-2xl">pin</span>
+        </div>
+        <input
+          name="pin"
+          type="password"
+          inputmode="numeric"
+          maxlength="10"
+          class="w-full bg-slate-100 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl py-6 pl-14 pr-6 text-2xl font-bold tracking-[0.5em] focus:ring-4 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-600 placeholder:tracking-normal text-center"
+          placeholder="Enter PIN"
+          autofocus
+          required
+        />
+      </div>
+      <button type="submit"
+        class="w-full bg-primary hover:bg-primary/90 text-white py-5 rounded-2xl text-xl font-black shadow-xl shadow-primary/20 transform hover:scale-[1.01] transition-all flex items-center justify-center gap-3">
+        <span class="material-symbols-outlined text-2xl">lock_open</span>
+        Unlock Check-In
+      </button>
+    </form>
+
+    {% else %}
+    <!-- =================== -->
+    <!-- CHECK-IN SCREEN     -->
+    <!-- Shows after PIN verified -->
+    <!-- =================== -->
 
     <!-- Live Clock Display -->
     <div class="text-center mb-12">
@@ -164,6 +225,8 @@
       </div>
     </div>
 
+    {% endif %}
+
   </main>
 
   <!-- ====== -->
@@ -183,13 +246,15 @@
     <div class="bg-primary size-[400px] rounded-full"></div>
   </div>
 
-  <!-- ========================= -->
-  <!-- LIVE CLOCK + STATUS SCRIPT -->
-  <!-- ========================= -->
+  <!-- ================================ -->
+  <!-- LIVE CLOCK + STATUS + FULLSCREEN -->
+  <!-- ================================ -->
   <script>
+    // =====================
+    // LIVE CLOCK + GYM STATUS
+    // =====================
     function updateClock() {
-      const now = new Date();
-
+      const now    = new Date();
       const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
       const months = ['January','February','March','April','May','June','July',
                       'August','September','October','November','December'];
@@ -203,28 +268,54 @@
       const ampm    = hours >= 12 ? 'PM' : 'AM';
       hours         = hours % 12 || 12;
 
-      document.getElementById('live-date').textContent = `${dayName}, ${month} ${date}`;
-      document.getElementById('live-time').textContent = `${hours}:${minutes}`;
-      document.getElementById('live-ampm').textContent = ampm;
+      const dateEl = document.getElementById('live-date');
+      const timeEl = document.getElementById('live-time');
+      const ampmEl = document.getElementById('live-ampm');
 
-      // ============================
-      // DYNAMIC GYM STATUS
-      // Open: 7:00 AM to 10:00 PM
-      // hour >= 7 means 7 AM or later
-      // hour < 22 means before 10 PM
-      // ============================
-      const hour   = now.getHours();
-      const isOpen = hour >= 7 && hour < 22;
+      if (dateEl) dateEl.textContent = `${dayName}, ${month} ${date}`;
+      if (timeEl) timeEl.textContent = `${hours}:${minutes}`;
+      if (ampmEl) ampmEl.textContent = ampm;
+
+      // Dynamic gym status
+      const hour     = now.getHours();
+      const isOpen   = hour >= 7 && hour < 22;
       const statusEl = document.getElementById('gym-status');
-
-      statusEl.innerHTML = isOpen
-        ? '<span class="size-2 bg-green-500 rounded-full mr-1 inline-block"></span><span class="text-green-500">OPEN</span>'
-        : '<span class="size-2 bg-red-500 rounded-full mr-1 inline-block"></span><span class="text-red-500">CLOSED</span>';
+      if (statusEl) {
+        statusEl.innerHTML = isOpen
+          ? '<span class="size-2 bg-green-500 rounded-full mr-1 inline-block"></span><span class="text-green-500">OPEN</span>'
+          : '<span class="size-2 bg-red-500 rounded-full mr-1 inline-block"></span><span class="text-red-500">CLOSED</span>';
+      }
     }
 
-    // Run immediately on load then update every second
     updateClock();
     setInterval(updateClock, 1000);
+
+    // =====================
+    // FULLSCREEN TOGGLE
+    // =====================
+    function toggleFullscreen() {
+      const icon = document.getElementById('fullscreen-icon');
+
+      if (!document.fullscreenElement) {
+        // Enter fullscreen
+        document.documentElement.requestFullscreen().then(() => {
+          icon.textContent = 'fullscreen_exit';
+        });
+      } else {
+        // Exit fullscreen
+        document.exitFullscreen().then(() => {
+          icon.textContent = 'fullscreen';
+        });
+      }
+    }
+
+    // Update icon if user exits fullscreen via keyboard (Escape key)
+    document.addEventListener('fullscreenchange', () => {
+      const icon = document.getElementById('fullscreen-icon');
+      if (icon) {
+        icon.textContent = document.fullscreenElement ? 'fullscreen_exit' : 'fullscreen';
+      }
+    });
   </script>
 
 </body>

@@ -34,8 +34,6 @@ with app.app_context():
 
 # =====================
 # PHILIPPINE TIME HELPER
-# Always use this instead of datetime.now()
-# Philippines is UTC+8 — Render servers run on UTC
 # =====================
 def ph_time():
     ph_tz = pytz.timezone('Asia/Manila')
@@ -43,10 +41,37 @@ def ph_time():
 
 
 # =====================
+# SUSPENSION HELPER
+# =====================
+def is_suspended():
+    return os.environ.get('SUSPENDED', 'false').lower() == 'true'
+
+
+# =====================
+# PIN VERIFIED HELPER
+# Checks if this browser session has already verified the PIN
+# =====================
+def pin_verified():
+    return session.get('pin_verified') == True
+
+
+# =====================
 # CHECK-IN ROUTE
 # =====================
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    if is_suspended():
+        return render_template('suspended.html'), 503
+
+    # If PIN has not been verified yet, show the PIN screen
+    if not pin_verified():
+        return render_template('index.html',
+            show_pin_screen = True,
+            pin_error       = None,
+            success_name    = None,
+            success_time    = None
+        )
+
     success_name = None
     success_time = None
 
@@ -71,9 +96,37 @@ def index():
             success_time = new_session.time_in.strftime('%I:%M %p')
 
     return render_template('index.html',
-        success_name = success_name,
-        success_time = success_time
+        show_pin_screen = False,
+        pin_error       = None,
+        success_name    = success_name,
+        success_time    = success_time
     )
+
+
+# =====================
+# VERIFY PIN ROUTE
+# Handles the PIN form submission
+# =====================
+@app.route('/verify-pin', methods=['POST'])
+def verify_pin():
+    if is_suspended():
+        return render_template('suspended.html'), 503
+
+    entered_pin  = request.form.get('pin', '').strip()
+    correct_pin  = os.environ.get('CHECKIN_PIN', '1234')
+
+    if entered_pin == correct_pin:
+        # PIN is correct — mark this session as verified
+        session['pin_verified'] = True
+        return redirect(url_for('index'))
+    else:
+        # PIN is wrong — show error on PIN screen
+        return render_template('index.html',
+            show_pin_screen = True,
+            pin_error       = 'Incorrect PIN. Please try again.',
+            success_name    = None,
+            success_time    = None
+        )
 
 
 # =====================
@@ -81,6 +134,9 @@ def index():
 # =====================
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if is_suspended():
+        return render_template('suspended.html'), 503
+
     error = None
 
     if request.method == 'POST':
@@ -114,6 +170,8 @@ def login_required(f):
     from functools import wraps
     @wraps(f)
     def decorated(*args, **kwargs):
+        if is_suspended():
+            return render_template('suspended.html'), 503
         if not session.get('logged_in'):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
@@ -136,7 +194,6 @@ def get_reset_date():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    # Use Philippine time for all date calculations
     now = ph_time()
 
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -201,7 +258,6 @@ def dashboard():
 @app.route('/reset-earnings', methods=['POST'])
 @login_required
 def reset_earnings():
-    # Use Philippine time for reset timestamp
     now_str = ph_time().strftime('%Y-%m-%d %H:%M:%S')
     setting = Settings.query.filter_by(key='earnings_reset_date').first()
 

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Rico Gym - Service Suspended</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#259df4",
+            "background-dark": "#101a22",
+          },
+          fontFamily: { "display": ["Inter", "sans-serif"] },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-background-dark text-slate-100 min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
+
+  <!-- Background decoration -->
+  <div class="fixed top-0 right-0 -z-10 opacity-5 blur-3xl pointer-events-none">
+    <div class="bg-red-500 w-[500px] h-[500px] rounded-full"></div>
+  </div>
+  <div class="fixed bottom-0 left-0 -z-10 opacity-5 blur-3xl pointer-events-none">
+    <div class="bg-red-500 w-[400px] h-[400px] rounded-full"></div>
+  </div>
+
+  <div class="max-w-md w-full text-center">
+
+    <!-- Logo -->
+    <div class="flex items-center justify-center gap-3 mb-12">
+      <div class="text-primary">
+        <span class="material-symbols-outlined text-5xl">fitness_center</span>
+      </div>
+      <h2 class="text-2xl font-extrabold tracking-tight uppercase">Rico Gym</h2>
+    </div>
+
+    <!-- Suspended Icon -->
+    <div class="w-24 h-24 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-8">
+      <span class="material-symbols-outlined text-red-400 text-5xl">block</span>
+    </div>
+
+    <!-- Main Message -->
+    <h1 class="text-3xl font-black tracking-tight mb-4">Service Suspended</h1>
+    <p class="text-slate-400 text-lg leading-relaxed mb-8">
+      The Rico Gym management system is currently unavailable.
+      Please contact your system provider to restore access.
+    </p>
+
+    <!-- Info Card -->
+    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 mb-8 text-left">
+      <div class="flex items-start gap-4">
+        <span class="material-symbols-outlined text-amber-400 mt-0.5">info</span>
+        <div>
+          <p class="font-bold text-sm mb-1">For the Gym Owner</p>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Your subscription may have lapsed or a payment is overdue.
+            Please settle your dues with your system provider to get
+            your gym system back online immediately.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Details -->
+    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 text-left">
+      <p class="text-xs font-black uppercase tracking-widest text-slate-500 mb-4">Contact Your Provider</p>
+      <div class="flex flex-col gap-3">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-primary text-xl">person</span>
+          <div>
+            <p class="text-xs text-slate-500 uppercase tracking-wider">Developer</p>
+            <p class="font-bold text-sm">Tyrone Pascual</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-primary text-xl">smartphone</span>
+          <div>
+            <p class="text-xs text-slate-500 uppercase tracking-wider">Contact</p>
+            <p class="font-bold text-sm">GCash / Call / SMS</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-primary text-xl">schedule</span>
+          <div>
+            <p class="text-xs text-slate-500 uppercase tracking-wider">Response Time</p>
+            <p class="font-bold text-sm">Within 24 hours</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-slate-600 text-xs mt-10">
+      © 2026 Rico Gym Management System
+    </p>
+
+  </div>
+
+</body>
+</html>
