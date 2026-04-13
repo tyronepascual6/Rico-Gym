@@ -1,6 +1,8 @@
 import os
+import io
+import csv
 import pytz
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, Response
 from models import db, Member, Session as GymSession, Settings
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
@@ -49,7 +51,6 @@ def is_suspended():
 
 # =====================
 # PIN VERIFIED HELPER
-# Checks if this browser session has already verified the PIN
 # =====================
 def pin_verified():
     return session.get('pin_verified') == True
@@ -63,7 +64,6 @@ def index():
     if is_suspended():
         return render_template('suspended.html'), 503
 
-    # If PIN has not been verified yet, show the PIN screen
     if not pin_verified():
         return render_template('index.html',
             show_pin_screen = True,
@@ -105,22 +105,19 @@ def index():
 
 # =====================
 # VERIFY PIN ROUTE
-# Handles the PIN form submission
 # =====================
 @app.route('/verify-pin', methods=['POST'])
 def verify_pin():
     if is_suspended():
         return render_template('suspended.html'), 503
 
-    entered_pin  = request.form.get('pin', '').strip()
-    correct_pin  = os.environ.get('CHECKIN_PIN', '1234')
+    entered_pin = request.form.get('pin', '').strip()
+    correct_pin = os.environ.get('CHECKIN_PIN', '1234')
 
     if entered_pin == correct_pin:
-        # PIN is correct — mark this session as verified
         session['pin_verified'] = True
         return redirect(url_for('index'))
     else:
-        # PIN is wrong — show error on PIN screen
         return render_template('index.html',
             show_pin_screen = True,
             pin_error       = 'Incorrect PIN. Please try again.',
@@ -331,6 +328,131 @@ def members():
     return render_template('members.html',
         members = all_members,
         search  = search
+    )
+
+
+# =====================
+# HISTORY ROUTE
+# Shows ALL check-ins ever — ignores reset date
+# Supports filtering by name, date_from, date_to
+# =====================
+@app.route('/history')
+@login_required
+def history():
+    # Read filter parameters from URL
+    search    = request.args.get('search', '').strip()
+    date_from = request.args.get('date_from', '').strip()
+    date_to   = request.args.get('date_to', '').strip()
+
+    # Start with all sessions ordered by most recent first
+    query = GymSession.query
+
+    # Filter by name if search is provided
+    if search:
+        query = query.filter(GymSession.name.ilike(f'%{search}%'))
+
+    # Filter by date_from if provided
+    if date_from:
+        try:
+            from_dt = datetime.strptime(date_from, '%Y-%m-%d')
+            query = query.filter(GymSession.time_in >= from_dt)
+        except ValueError:
+            pass
+
+    # Filter by date_to if provided
+    # Add 1 day so "to" date is inclusive of the full day
+    if date_to:
+        try:
+            to_dt = datetime.strptime(date_to, '%Y-%m-%d') + timedelta(days=1)
+            query = query.filter(GymSession.time_in < to_dt)
+        except ValueError:
+            pass
+
+    logs = query.order_by(GymSession.time_in.desc()).all()
+
+    # Compute total earnings for the filtered results
+    total_earnings = len(logs) * 50
+    total_checkins = len(logs)
+
+    return render_template('history.html',
+        logs           = logs,
+        search         = search,
+        date_from      = date_from,
+        date_to        = date_to,
+        total_earnings = total_earnings,
+        total_checkins = total_checkins
+    )
+
+
+# =====================
+# EXPORT CSV ROUTE
+# Downloads the same filtered data as history page as a CSV file
+# =====================
+@app.route('/export-csv')
+@login_required
+def export_csv():
+    # Read same filter parameters
+    search    = request.args.get('search', '').strip()
+    date_from = request.args.get('date_from', '').strip()
+    date_to   = request.args.get('date_to', '').strip()
+
+    # Same query logic as history route
+    query = GymSession.query
+
+    if search:
+        query = query.filter(GymSession.name.ilike(f'%{search}%'))
+
+    if date_from:
+        try:
+            from_dt = datetime.strptime(date_from, '%Y-%m-%d')
+            query = query.filter(GymSession.time_in >= from_dt)
+        except ValueError:
+            pass
+
+    if date_to:
+        try:
+            to_dt = datetime.strptime(date_to, '%Y-%m-%d') + timedelta(days=1)
+            query = query.filter(GymSession.time_in < to_dt)
+        except ValueError:
+            pass
+
+    logs = query.order_by(GymSession.time_in.desc()).all()
+
+    # Build CSV in memory using StringIO
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Write header row
+    writer.writerow(['#', 'Name', 'Type', 'Member ID', 'Check-in Date', 'Check-in Time', 'Fee (PHP)'])
+
+    # Write one row per check-in
+    for i, log in enumerate(logs, start=1):
+        writer.writerow([
+            i,
+            log.name,
+            'Member' if log.member_id else 'Walk-in',
+            log.member_id if log.member_id else 'N/A',
+            log.time_in.strftime('%B %d, %Y'),
+            log.time_in.strftime('%I:%M %p'),
+            log.fee
+        ])
+
+    # Write summary rows at the bottom
+    writer.writerow([])
+    writer.writerow(['', '', '', '', '', 'Total Check-ins:', len(logs)])
+    writer.writerow(['', '', '', '', '', 'Total Earnings:', f'PHP {len(logs) * 50}'])
+    writer.writerow(['', '', '', '', '', 'Exported on:', ph_time().strftime('%B %d, %Y at %I:%M %p')])
+
+    # Build the filename with today's date
+    filename = f'rico_gym_history_{ph_time().strftime("%Y%m%d")}.csv'
+
+    # Return as downloadable file response
+    return Response(
+        output.getvalue(),
+        mimetype='text/csv',
+        headers={
+            'Content-Disposition': f'attachment; filename={filename}'
+        }
     )
 
 
