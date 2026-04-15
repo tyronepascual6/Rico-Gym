@@ -17,149 +17,109 @@
             "background-dark": "#101a22",
           },
           fontFamily: { "display": ["Inter"] },
-          borderRadius: {
-            "DEFAULT": "0.25rem", "lg": "0.5rem",
-            "xl": "0.75rem", "full": "9999px"
-          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
         },
       },
     }
   </script>
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
+  <style>body { font-family: 'Inter', sans-serif; }</style>
   <title>Rico Gym - Add New Member</title>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
 <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
 <div class="layout-container flex h-full grow flex-col">
 
-  <!-- ================== -->
-  <!-- NAVIGATION HEADER  -->
-  <!-- ================== -->
-  <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-4 md:px-10 py-3 bg-background-light dark:bg-background-dark">
-    <div class="flex items-center gap-4 text-primary">
-      <div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
-        <span class="material-symbols-outlined">fitness_center</span>
+  <!-- HEADER -->
+  <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-4 sm:px-10 py-3 bg-background-light dark:bg-background-dark">
+    <div class="flex items-center gap-3 text-primary">
+      <div class="size-7 sm:size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+        <span class="material-symbols-outlined text-lg sm:text-xl">fitness_center</span>
       </div>
-      <h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em]">Rico Gym</h2>
+      <h2 class="text-slate-900 dark:text-slate-100 text-base sm:text-lg font-bold leading-tight tracking-[-0.015em]">Rico Gym</h2>
     </div>
-    <div class="flex flex-1 justify-end gap-8 items-center">
-      <nav class="hidden md:flex items-center gap-9">
-        <!-- Nav links wired to real routes -->
-        <a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal transition-colors" href="/dashboard">Dashboard</a>
-        <a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal transition-colors" href="/members">Members</a>
-        <a class="text-primary text-sm font-bold leading-normal" href="/register">Add Member</a>
+    <div class="flex flex-1 justify-end gap-4 sm:gap-8 items-center">
+      <!-- Nav links hidden on small screens -->
+      <nav class="hidden md:flex items-center gap-6 sm:gap-9">
+        <a class="text-slate-600 dark:text-slate-400 hover:text-primary text-sm font-medium transition-colors" href="/dashboard">Dashboard</a>
+        <a class="text-slate-600 dark:text-slate-400 hover:text-primary text-sm font-medium transition-colors" href="/members">Members</a>
+        <a class="text-primary text-sm font-bold" href="/register">Add Member</a>
       </nav>
       <a href="/logout"
-        class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:opacity-90 transition-opacity">
-        <span class="material-symbols-outlined mr-1 text-[18px]">logout</span>
-        Logout
+        class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 sm:h-10 px-3 sm:px-4 bg-primary text-white text-xs sm:text-sm font-bold hover:opacity-90 transition-opacity">
+        <span class="material-symbols-outlined mr-1 text-base sm:text-lg">logout</span>
+        <span class="hidden sm:inline">Logout</span>
       </a>
     </div>
   </header>
 
-  <!-- =========== -->
-  <!-- MAIN CONTENT -->
-  <!-- =========== -->
-  <main class="flex flex-1 justify-center py-10 px-4 md:px-10">
-    <div class="layout-content-container flex flex-col max-w-[640px] flex-1">
+  <!-- MAIN -->
+  <main class="flex flex-1 justify-center py-6 sm:py-10 px-4 sm:px-10">
+    <div class="layout-content-container flex flex-col max-w-[640px] flex-1 w-full">
 
-      <!-- Back link and page title -->
-      <div class="flex flex-col gap-2 mb-8">
-        <div class="flex items-center gap-2 text-primary mb-2">
+      <!-- Back + Title -->
+      <div class="flex flex-col gap-2 mb-6 sm:mb-8">
+        <div class="flex items-center gap-2 text-primary mb-1 sm:mb-2">
           <a class="flex items-center gap-1 text-sm font-medium hover:underline" href="/dashboard">
             <span class="material-symbols-outlined text-sm">arrow_back</span>
             Back to Dashboard
           </a>
         </div>
-        <h1 class="text-slate-900 dark:text-slate-100 tracking-tight text-3xl font-bold leading-tight">Add New Member</h1>
-        <p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">
-          Register a new member to Rico Gym. Only their name is required.
-        </p>
+        <h1 class="text-slate-900 dark:text-slate-100 tracking-tight text-2xl sm:text-3xl font-bold leading-tight">Add New Member</h1>
+        <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base font-normal leading-normal">Register a new member. Only their name is required.</p>
       </div>
 
-      <!-- ======================== -->
-      <!-- SUCCESS MESSAGE          -->
-      <!-- Shows after registration -->
-      <!-- ======================== -->
+      <!-- Success Message -->
       {% if success %}
-      <div class="mb-6 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-5 flex items-center gap-4">
-        <span class="material-symbols-outlined text-emerald-500 text-3xl">check_circle</span>
+      <div class="mb-5 sm:mb-6 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
+        <span class="material-symbols-outlined text-emerald-500 text-2xl sm:text-3xl">check_circle</span>
         <div>
-          <p class="font-bold text-emerald-500">Registration Successful!</p>
-          <p class="text-sm text-slate-400 mt-0.5">{{ success }}</p>
+          <p class="font-bold text-emerald-500 text-sm sm:text-base">Registration Successful!</p>
+          <p class="text-xs sm:text-sm text-slate-400 mt-0.5">{{ success }}</p>
         </div>
       </div>
       {% endif %}
 
-      <!-- ======================== -->
-      <!-- ERROR MESSAGE            -->
-      <!-- Shows if name is taken   -->
-      <!-- ======================== -->
+      <!-- Error Message -->
       {% if error %}
-      <div class="mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-5 flex items-center gap-4">
-        <span class="material-symbols-outlined text-red-400 text-3xl">error</span>
+      <div class="mb-5 sm:mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
+        <span class="material-symbols-outlined text-red-400 text-2xl sm:text-3xl">error</span>
         <div>
-          <p class="font-bold text-red-400">Registration Failed</p>
-          <p class="text-sm text-slate-400 mt-0.5">{{ error }}</p>
+          <p class="font-bold text-red-400 text-sm sm:text-base">Registration Failed</p>
+          <p class="text-xs sm:text-sm text-slate-400 mt-0.5">{{ error }}</p>
         </div>
       </div>
       {% endif %}
 
-      <!-- ================ -->
-      <!-- REGISTRATION FORM -->
-      <!-- ================ -->
-      <!-- action="/register" sends form to Flask's register route -->
-      <!-- method="POST" tells Flask this is a form submission     -->
-      <div class="space-y-6 bg-white dark:bg-slate-900/50 p-6 md:p-8 rounded-xl border border-slate-200 dark:border-slate-800">
-        <form action="/register" method="POST" class="flex flex-col gap-6">
+      <!-- Form Card -->
+      <div class="space-y-5 sm:space-y-6 bg-white dark:bg-slate-900/50 p-5 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-800">
+        <form action="/register" method="POST" class="flex flex-col gap-5 sm:gap-6">
 
-          <!-- Member ID — auto-generated, shown after success only -->
-          <!-- We don't show this field before submission since Flask generates it -->
           {% if success %}
           <label class="flex flex-col w-full">
-            <p class="text-slate-900 dark:text-slate-100 text-sm font-semibold leading-normal pb-2">
-              Generated Member ID
-            </p>
-            <div class="flex gap-2">
-              <input
-                class="form-input flex w-full rounded-lg text-primary dark:text-primary border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 h-14 p-[15px] text-base font-bold leading-normal"
-                readonly
-                value="{{ success.split('ID ')[1] if 'ID' in success else '' }}"
-              />
-            </div>
+            <p class="text-slate-900 dark:text-slate-100 text-sm font-semibold leading-normal pb-2">Generated Member ID</p>
+            <input
+              class="form-input flex w-full rounded-lg text-primary dark:text-primary border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 h-12 sm:h-14 p-[15px] text-sm sm:text-base font-bold leading-normal"
+              readonly value="{{ success.split('ID ')[1] if 'ID' in success else '' }}"/>
             <p class="text-slate-500 text-xs mt-1">Auto-generated unique identifier.</p>
           </label>
           {% endif %}
 
-          <!-- Full Name field — the only required input -->
           <label class="flex flex-col w-full">
-            <p class="text-slate-900 dark:text-slate-100 text-sm font-semibold leading-normal pb-2">
-              Full Name <span class="text-primary">*</span>
-            </p>
+            <p class="text-slate-900 dark:text-slate-100 text-sm font-semibold leading-normal pb-2">Full Name <span class="text-primary">*</span></p>
             <input
-              class="form-input flex w-full rounded-lg text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 h-14 placeholder:text-slate-400 dark:placeholder:text-slate-600 p-[15px] text-base font-normal leading-normal"
-              name="name"
-              placeholder="e.g. Juan Dela Cruz"
-              type="text"
-              required
-              autocomplete="off"
-            />
-            <p class="text-slate-500 text-xs mt-1">Enter the member's full name. This is used for check-in lookup.</p>
+              class="form-input flex w-full rounded-lg text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 h-12 sm:h-14 placeholder:text-slate-400 dark:placeholder:text-slate-600 p-[15px] text-sm sm:text-base font-normal leading-normal"
+              name="name" placeholder="e.g. Juan Dela Cruz" type="text" required autocomplete="off"/>
+            <p class="text-slate-500 text-xs mt-1">Used for check-in lookup.</p>
           </label>
 
-          <!-- Action Buttons -->
-          <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-slate-200 dark:border-slate-800">
-            <button
-              type="submit"
-              class="flex-1 flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-primary text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
-              <span class="material-symbols-outlined">person_add</span>
+          <div class="flex flex-col sm:flex-row gap-3 pt-4 sm:pt-6 border-t border-slate-200 dark:border-slate-800">
+            <button type="submit"
+              class="flex-1 flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 sm:h-12 bg-primary text-white gap-2 text-sm sm:text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+              <span class="material-symbols-outlined text-lg">person_add</span>
               Register Member
             </button>
-            <!-- Cancel goes back to dashboard -->
             <a href="/dashboard"
-              class="flex-1 flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">
+              class="flex-1 flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 sm:h-12 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 gap-2 text-sm sm:text-base font-bold leading-normal tracking-[0.015em] hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors">
               Cancel
             </a>
           </div>
@@ -167,14 +127,13 @@
         </form>
       </div>
 
-      <!-- Info notice at the bottom -->
-      <div class="mt-8 p-4 bg-primary/5 rounded-lg border border-primary/10 flex gap-4 items-start">
-        <span class="material-symbols-outlined text-primary">info</span>
+      <!-- Info Notice -->
+      <div class="mt-6 sm:mt-8 p-3 sm:p-4 bg-primary/5 rounded-lg border border-primary/10 flex gap-3 sm:gap-4 items-start">
+        <span class="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5">info</span>
         <div>
-          <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Check-in Ready Immediately</p>
+          <p class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-slate-100">Check-in Ready Immediately</p>
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Once registered, the member can check in using their name on the main check-in screen.
-            Walk-in guests don't need to be registered.
+            Once registered, the member can check in using their name on the main check-in screen. Walk-in guests don't need to be registered.
           </p>
         </div>
       </div>
@@ -182,10 +141,8 @@
     </div>
   </main>
 
-  <!-- ====== -->
   <!-- FOOTER -->
-  <!-- ====== -->
-  <footer class="mt-auto py-6 border-t border-slate-200 dark:border-slate-800 text-center">
+  <footer class="mt-auto py-4 sm:py-6 border-t border-slate-200 dark:border-slate-800 text-center">
     <p class="text-slate-500 text-xs">© 2026 Rico Gym Management System. All rights reserved.</p>
   </footer>
 
