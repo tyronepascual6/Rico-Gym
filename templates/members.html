@@ -13,12 +13,9 @@
       theme: {
         extend: {
           colors: {
-            "primary": "#259df4",
-            "background-dark": "#101a22",
-            "surface-container-low": "#13212c",
-            "surface-container": "#1c2c39",
-            "surface-container-high": "#243746",
-            "surface-container-highest": "#2d4354",
+            "primary": "#259df4", "background-dark": "#101a22",
+            "surface-container-low": "#13212c", "surface-container": "#1c2c39",
+            "surface-container-high": "#243746", "surface-container-highest": "#2d4354",
             "on-surface": "#f1f5f9",
           },
           fontFamily: { "headline": ["Inter"], "body": ["Inter"] },
@@ -34,20 +31,8 @@
 </head>
 <body class="bg-background-dark text-on-surface min-h-screen">
 
-  <!-- ===================== -->
-  <!-- MOBILE SIDEBAR OVERLAY -->
-  <!-- Tap outside to close  -->
-  <!-- ===================== -->
-  <div id="sidebar-overlay"
-    class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"
-    onclick="closeSidebar()">
-  </div>
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden" onclick="closeSidebar()"></div>
 
-  <!-- =============== -->
-  <!-- SIDE NAVIGATION -->
-  <!-- On mobile: hidden by default, slides in via JS -->
-  <!-- On desktop (lg+): always visible              -->
-  <!-- =============== -->
   <aside id="sidebar"
     class="fixed left-0 top-0 h-full flex flex-col py-6 sm:py-8 bg-[#101a22] w-64 shadow-xl shadow-black z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
     <div class="px-6 mb-8 sm:mb-10">
@@ -59,7 +44,6 @@
       </div>
       <p class="text-[10px] sm:text-[11px] font-black tracking-widest uppercase text-slate-500">Admin Console</p>
     </div>
-
     <nav class="flex-1 space-y-1">
       <a onclick="closeSidebar()" class="flex items-center gap-4 px-6 py-3 sm:py-4 text-slate-500 hover:text-slate-300 transition-all font-['Inter'] text-[11px] font-black tracking-widest uppercase hover:bg-slate-800/30" href="/dashboard">
         <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
@@ -74,7 +58,6 @@
         <span class="material-symbols-outlined">history</span><span>History</span>
       </a>
     </nav>
-
     <div class="px-6 mt-auto">
       <a href="/register" onclick="closeSidebar()"
         class="block w-full bg-primary text-white font-black text-[11px] tracking-widest uppercase py-3 sm:py-4 rounded-lg shadow-lg shadow-primary/20 hover:brightness-110 active:scale-95 transition-all text-center">
@@ -86,18 +69,11 @@
     </div>
   </aside>
 
-  <!-- ============ -->
-  <!-- MAIN CONTENT -->
-  <!-- lg: offset by sidebar width. Mobile: full width -->
-  <!-- ============ -->
   <main class="lg:ml-64 flex-1 flex flex-col min-h-screen">
 
-    <!-- Top Bar -->
     <header class="h-14 sm:h-16 fixed top-0 right-0 left-0 lg:left-64 bg-[#101a22] flex justify-between items-center px-4 sm:px-8 z-40 shadow-sm shadow-blue-900/20">
       <div class="flex items-center gap-3">
-        <!-- Hamburger button — only shows on mobile -->
-        <button onclick="openSidebar()"
-          class="lg:hidden p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800">
+        <button onclick="openSidebar()" class="lg:hidden p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800">
           <span class="material-symbols-outlined">menu</span>
         </button>
         <div class="flex items-center gap-2">
@@ -106,8 +82,8 @@
         </div>
       </div>
       <div class="flex items-center gap-3 sm:gap-6">
-        <div class="flex items-center gap-2 sm:gap-3 border-l border-slate-800 pl-3 sm:pl-6">
-          <div class="text-right hidden sm:block">
+        <div class="hidden sm:flex items-center gap-3 border-l border-slate-800 pl-6">
+          <div class="text-right">
             <p class="text-xs font-black text-white">RICO ADMIN</p>
             <p class="text-[10px] text-primary">Administrator</p>
           </div>
@@ -117,15 +93,12 @@
 
     <section class="mt-14 sm:mt-16 p-4 sm:p-8 flex-1">
 
-      <!-- Page Title -->
       <div class="mb-6 sm:mb-10">
         <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tighter mb-2">Member Directory</h2>
         <p class="text-slate-400 font-medium text-sm sm:text-base">All registered members of Rico Gym.</p>
       </div>
 
-      <!-- Search and Actions Bar -->
       <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
-        <!-- Search -->
         <form action="/members" method="GET" class="flex gap-2 sm:gap-4 flex-1">
           <div class="flex-1 relative">
             <span class="material-symbols-outlined absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">search</span>
@@ -139,7 +112,6 @@
             <span class="hidden sm:inline">Search</span>
           </button>
         </form>
-        <!-- Add Member Button -->
         <a href="/register"
           class="bg-primary text-white px-4 sm:px-8 py-3 rounded-lg font-black text-[11px] tracking-widest uppercase shadow-lg shadow-primary/20 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all whitespace-nowrap">
           <span class="material-symbols-outlined text-sm">person_add</span>
@@ -147,7 +119,6 @@
         </a>
       </div>
 
-      <!-- Members Table — horizontal scroll on mobile -->
       <div class="bg-surface-container-low rounded-xl shadow-xl shadow-black overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse min-w-[500px]">
@@ -160,7 +131,6 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-800/50">
-
               {% for member in members %}
               <tr class="hover:bg-slate-800/30 transition-colors">
                 <td class="px-4 sm:px-8 py-3 sm:py-5 text-xs sm:text-sm font-mono text-primary">#{{ member.member_id }}</td>
@@ -172,48 +142,32 @@
                     <p class="text-white font-bold text-sm sm:text-base">{{ member.name }}</p>
                   </div>
                 </td>
-                <td class="px-4 sm:px-8 py-3 sm:py-5 text-xs sm:text-sm text-slate-300">
-                  {{ member.date_registered.strftime('%b %d, %Y') }}
-                </td>
+                <td class="px-4 sm:px-8 py-3 sm:py-5 text-xs sm:text-sm text-slate-300">{{ member.date_registered.strftime('%b %d, %Y') }}</td>
                 <td class="px-4 sm:px-8 py-3 sm:py-5 text-center">
                   <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black tracking-widest uppercase bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 sm:mr-2 animate-pulse"></span>
-                    Active
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 sm:mr-2 animate-pulse"></span>Active
                   </span>
                 </td>
               </tr>
-
               {% else %}
               <tr>
                 <td colspan="4" class="px-4 sm:px-8 py-12 sm:py-16 text-center text-slate-500">
-                  {% if search %}
-                    No members found matching "<span class="text-white">{{ search }}</span>".
-                    <a href="/members" class="text-primary hover:underline ml-1">Clear</a>
-                  {% else %}
-                    No members registered yet.
-                    <a href="/register" class="text-primary hover:underline ml-1">Add the first member.</a>
-                  {% endif %}
+                  {% if search %}No members found matching "<span class="text-white">{{ search }}</span>". <a href="/members" class="text-primary hover:underline ml-1">Clear</a>
+                  {% else %}No members registered yet. <a href="/register" class="text-primary hover:underline ml-1">Add the first member.</a>{% endif %}
                 </td>
               </tr>
               {% endfor %}
-
             </tbody>
           </table>
         </div>
-
-        <!-- Table Footer -->
         <div class="px-4 sm:px-8 py-4 sm:py-6 bg-surface-container/50 flex justify-between items-center">
           <p class="text-[10px] font-black tracking-widest uppercase text-slate-500">
-            {{ members|length }} member{{ 's' if members|length != 1 else '' }}
-            {% if search %} matching "{{ search }}"{% endif %}
+            {{ members|length }} member{{ 's' if members|length != 1 else '' }}{% if search %} matching "{{ search }}"{% endif %}
           </p>
-          {% if search %}
-          <a href="/members" class="text-[11px] font-black text-primary hover:underline tracking-widest uppercase">Clear</a>
-          {% endif %}
+          {% if search %}<a href="/members" class="text-[11px] font-black text-primary hover:underline tracking-widest uppercase">Clear</a>{% endif %}
         </div>
       </div>
 
-      <!-- Summary Stats -->
       <div class="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         <div class="bg-surface-container-low rounded-xl p-4 sm:p-6 relative overflow-hidden">
           <p class="text-[10px] font-black tracking-widest uppercase text-slate-500 mb-3 sm:mb-4">Total Registered Members</p>
@@ -237,6 +191,13 @@
     </section>
   </main>
 
+  <!-- FLOATING FULLSCREEN BUTTON -->
+  <button id="fs-float-btn"
+    style="display:none;position:fixed;bottom:20px;right:20px;z-index:9999;background:rgba(37,157,244,0.92);color:white;border:none;border-radius:999px;padding:10px 18px;gap:6px;align-items:center;cursor:pointer;box-shadow:0 4px 16px rgba(37,157,244,0.45);font-family:Inter,sans-serif;font-weight:900;letter-spacing:0.05em;text-transform:uppercase;font-size:11px;transition:transform 0.15s;"
+    onmouseover="this.style.transform='scale(1.05)'"
+    onmouseout="this.style.transform='scale(1)'">
+  </button>
+
   <script>
     function openSidebar() {
       document.getElementById('sidebar').classList.remove('-translate-x-full');
@@ -246,6 +207,43 @@
       document.getElementById('sidebar').classList.add('-translate-x-full');
       document.getElementById('sidebar-overlay').classList.add('hidden');
     }
+
+    (function() {
+      var FS_KEY = 'rico_fullscreen';
+      function inFS() { return !!document.fullscreenElement; }
+
+      window.enterFullscreen = function() {
+        document.documentElement.requestFullscreen()
+          .then(function() { localStorage.setItem(FS_KEY, '1'); _syncUI(); })
+          .catch(function() {});
+      };
+      window.exitFullscreen = function() {
+        document.exitFullscreen()
+          .then(function() { localStorage.setItem(FS_KEY, '0'); _syncUI(); })
+          .catch(function() {});
+      };
+
+      function _syncUI() {
+        var active = inFS();
+        var pref   = localStorage.getItem(FS_KEY) === '1';
+        var btn    = document.getElementById('fs-float-btn');
+        if (!btn) return;
+        if (active) {
+          btn.style.display = 'flex';
+          btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;line-height:1">fullscreen_exit</span><span>Exit Fullscreen</span>';
+          btn.onclick = window.exitFullscreen;
+        } else if (pref) {
+          btn.style.display = 'flex';
+          btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;line-height:1">fullscreen</span><span>Fullscreen</span>';
+          btn.onclick = window.enterFullscreen;
+        } else {
+          btn.style.display = 'none';
+        }
+      }
+
+      document.addEventListener('fullscreenchange', _syncUI);
+      document.addEventListener('DOMContentLoaded', _syncUI);
+    })();
   </script>
 
 </body>

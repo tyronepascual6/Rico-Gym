@@ -7,16 +7,13 @@
   <link href="https://fonts.googleapis.com" rel="preconnect"/>
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          colors: {
-            primary: '#259df4',
-            dark: '#0f172a',
-            surface: '#1e293b',
-          },
+          colors: { primary: '#259df4', dark: '#0f172a', surface: '#1e293b' },
           fontFamily: { sans: ['Inter', 'sans-serif'] },
           borderRadius: { 'custom': '8px' }
         }
@@ -32,7 +29,6 @@
 
   <main class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
 
-    <!-- Brand Logo -->
     <div class="mb-6 sm:mb-8 text-center">
       <div class="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-primary mb-3 sm:mb-4 glow-primary">
         <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" stroke-linecap="round"
@@ -50,40 +46,33 @@
       <p class="text-slate-400 mt-1 sm:mt-2 text-sm sm:text-base">Admin Login Portal</p>
     </div>
 
-    <!-- Login Card — full width on mobile, max-md on larger screens -->
     <div class="w-full max-w-sm sm:max-w-md bg-surface border border-slate-700 p-6 sm:p-8 rounded-custom shadow-2xl">
       <form action="/login" method="POST" class="space-y-4 sm:space-y-6">
-
         <div class="space-y-2">
           <label class="block text-sm font-medium text-slate-300" for="username">Username</label>
           <input
             class="block w-full px-4 py-3 rounded-custom bg-dark border-slate-600 text-white placeholder-slate-500 focus:ring-primary focus:border-primary transition-colors text-sm sm:text-base"
             id="username" name="username" placeholder="Enter admin username" required type="text"/>
         </div>
-
         <div class="space-y-2">
           <label class="block text-sm font-medium text-slate-300" for="password">Password</label>
           <input
             class="block w-full px-4 py-3 rounded-custom bg-dark border-slate-600 text-white placeholder-slate-500 focus:ring-primary focus:border-primary transition-colors text-sm sm:text-base"
             id="password" name="password" placeholder="••••••••" required type="password"/>
         </div>
-
         {% if error %}
         <div class="bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium px-4 py-3 rounded-lg">
           {{ error }}
         </div>
         {% endif %}
-
         <button
           class="w-full py-3 px-4 bg-primary hover:bg-blue-600 text-white font-semibold rounded-custom transition duration-200 ease-in-out transform active:scale-[0.98] glow-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-dark text-sm sm:text-base"
           type="submit">
           Sign In
         </button>
-
       </form>
     </div>
 
-    <!-- Back to Check-In -->
     <div class="mt-6 sm:mt-8 text-center">
       <a class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="/">
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,6 +83,53 @@
     </div>
 
   </main>
+
+  <!-- FLOATING FULLSCREEN BUTTON -->
+  <button id="fs-float-btn"
+    style="display:none;position:fixed;bottom:20px;right:20px;z-index:9999;background:rgba(37,157,244,0.92);color:white;border:none;border-radius:999px;padding:10px 18px;gap:6px;align-items:center;cursor:pointer;box-shadow:0 4px 16px rgba(37,157,244,0.45);font-family:Inter,sans-serif;font-weight:900;letter-spacing:0.05em;text-transform:uppercase;font-size:11px;transition:transform 0.15s;"
+    onmouseover="this.style.transform='scale(1.05)'"
+    onmouseout="this.style.transform='scale(1)'">
+  </button>
+
+  <script>
+    (function() {
+      var FS_KEY = 'rico_fullscreen';
+      function inFS() { return !!document.fullscreenElement; }
+
+      window.enterFullscreen = function() {
+        document.documentElement.requestFullscreen()
+          .then(function() { localStorage.setItem(FS_KEY, '1'); _syncUI(); })
+          .catch(function() {});
+      };
+
+      window.exitFullscreen = function() {
+        document.exitFullscreen()
+          .then(function() { localStorage.setItem(FS_KEY, '0'); _syncUI(); })
+          .catch(function() {});
+      };
+
+      function _syncUI() {
+        var active = inFS();
+        var pref   = localStorage.getItem(FS_KEY) === '1';
+        var btn    = document.getElementById('fs-float-btn');
+        if (!btn) return;
+        if (active) {
+          btn.style.display = 'flex';
+          btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;line-height:1">fullscreen_exit</span><span>Exit Fullscreen</span>';
+          btn.onclick = window.exitFullscreen;
+        } else if (pref) {
+          btn.style.display = 'flex';
+          btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;line-height:1">fullscreen</span><span>Fullscreen</span>';
+          btn.onclick = window.enterFullscreen;
+        } else {
+          btn.style.display = 'none';
+        }
+      }
+
+      document.addEventListener('fullscreenchange', _syncUI);
+      document.addEventListener('DOMContentLoaded', _syncUI);
+    })();
+  </script>
 
 </body>
 </html>

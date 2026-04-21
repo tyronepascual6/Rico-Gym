@@ -11,11 +11,7 @@
       darkMode: "class",
       theme: {
         extend: {
-          colors: {
-            "primary": "#259df4",
-            "background-light": "#f5f7f8",
-            "background-dark": "#101a22",
-          },
+          colors: { "primary": "#259df4", "background-light": "#f5f7f8", "background-dark": "#101a22" },
           fontFamily: { "display": ["Inter"] },
           borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
         },
@@ -29,7 +25,6 @@
 <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
 <div class="layout-container flex h-full grow flex-col">
 
-  <!-- HEADER -->
   <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 px-4 sm:px-10 py-3 bg-background-light dark:bg-background-dark">
     <div class="flex items-center gap-3 text-primary">
       <div class="size-7 sm:size-8 flex items-center justify-center bg-primary/10 rounded-lg">
@@ -38,7 +33,6 @@
       <h2 class="text-slate-900 dark:text-slate-100 text-base sm:text-lg font-bold leading-tight tracking-[-0.015em]">Rico Gym</h2>
     </div>
     <div class="flex flex-1 justify-end gap-4 sm:gap-8 items-center">
-      <!-- Nav links hidden on small screens -->
       <nav class="hidden md:flex items-center gap-6 sm:gap-9">
         <a class="text-slate-600 dark:text-slate-400 hover:text-primary text-sm font-medium transition-colors" href="/dashboard">Dashboard</a>
         <a class="text-slate-600 dark:text-slate-400 hover:text-primary text-sm font-medium transition-colors" href="/members">Members</a>
@@ -52,11 +46,9 @@
     </div>
   </header>
 
-  <!-- MAIN -->
   <main class="flex flex-1 justify-center py-6 sm:py-10 px-4 sm:px-10">
     <div class="layout-content-container flex flex-col max-w-[640px] flex-1 w-full">
 
-      <!-- Back + Title -->
       <div class="flex flex-col gap-2 mb-6 sm:mb-8">
         <div class="flex items-center gap-2 text-primary mb-1 sm:mb-2">
           <a class="flex items-center gap-1 text-sm font-medium hover:underline" href="/dashboard">
@@ -68,7 +60,6 @@
         <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base font-normal leading-normal">Register a new member. Only their name is required.</p>
       </div>
 
-      <!-- Success Message -->
       {% if success %}
       <div class="mb-5 sm:mb-6 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
         <span class="material-symbols-outlined text-emerald-500 text-2xl sm:text-3xl">check_circle</span>
@@ -79,7 +70,6 @@
       </div>
       {% endif %}
 
-      <!-- Error Message -->
       {% if error %}
       <div class="mb-5 sm:mb-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4">
         <span class="material-symbols-outlined text-red-400 text-2xl sm:text-3xl">error</span>
@@ -90,7 +80,6 @@
       </div>
       {% endif %}
 
-      <!-- Form Card -->
       <div class="space-y-5 sm:space-y-6 bg-white dark:bg-slate-900/50 p-5 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-800">
         <form action="/register" method="POST" class="flex flex-col gap-5 sm:gap-6">
 
@@ -127,13 +116,12 @@
         </form>
       </div>
 
-      <!-- Info Notice -->
       <div class="mt-6 sm:mt-8 p-3 sm:p-4 bg-primary/5 rounded-lg border border-primary/10 flex gap-3 sm:gap-4 items-start">
         <span class="material-symbols-outlined text-primary text-lg sm:text-xl mt-0.5">info</span>
         <div>
           <p class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-slate-100">Check-in Ready Immediately</p>
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Once registered, the member can check in using their name on the main check-in screen. Walk-in guests don't need to be registered.
+            Once registered, the member can check in using their name. Walk-in guests don't need to be registered.
           </p>
         </div>
       </div>
@@ -141,12 +129,58 @@
     </div>
   </main>
 
-  <!-- FOOTER -->
   <footer class="mt-auto py-4 sm:py-6 border-t border-slate-200 dark:border-slate-800 text-center">
     <p class="text-slate-500 text-xs">© 2026 Rico Gym Management System. All rights reserved.</p>
   </footer>
 
 </div>
 </div>
+
+<!-- FLOATING FULLSCREEN BUTTON -->
+<button id="fs-float-btn"
+  style="display:none;position:fixed;bottom:20px;right:20px;z-index:9999;background:rgba(37,157,244,0.92);color:white;border:none;border-radius:999px;padding:10px 18px;gap:6px;align-items:center;cursor:pointer;box-shadow:0 4px 16px rgba(37,157,244,0.45);font-family:Inter,sans-serif;font-weight:900;letter-spacing:0.05em;text-transform:uppercase;font-size:11px;transition:transform 0.15s;"
+  onmouseover="this.style.transform='scale(1.05)'"
+  onmouseout="this.style.transform='scale(1)'">
+</button>
+
+<script>
+  (function() {
+    var FS_KEY = 'rico_fullscreen';
+    function inFS() { return !!document.fullscreenElement; }
+
+    window.enterFullscreen = function() {
+      document.documentElement.requestFullscreen()
+        .then(function() { localStorage.setItem(FS_KEY, '1'); _syncUI(); })
+        .catch(function() {});
+    };
+    window.exitFullscreen = function() {
+      document.exitFullscreen()
+        .then(function() { localStorage.setItem(FS_KEY, '0'); _syncUI(); })
+        .catch(function() {});
+    };
+
+    function _syncUI() {
+      var active = inFS();
+      var pref   = localStorage.getItem(FS_KEY) === '1';
+      var btn    = document.getElementById('fs-float-btn');
+      if (!btn) return;
+      if (active) {
+        btn.style.display = 'flex';
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;line-height:1">fullscreen_exit</span><span>Exit Fullscreen</span>';
+        btn.onclick = window.exitFullscreen;
+      } else if (pref) {
+        btn.style.display = 'flex';
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;line-height:1">fullscreen</span><span>Fullscreen</span>';
+        btn.onclick = window.enterFullscreen;
+      } else {
+        btn.style.display = 'none';
+      }
+    }
+
+    document.addEventListener('fullscreenchange', _syncUI);
+    document.addEventListener('DOMContentLoaded', _syncUI);
+  })();
+</script>
+
 </body>
 </html>

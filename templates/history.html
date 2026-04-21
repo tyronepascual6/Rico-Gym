@@ -13,12 +13,9 @@
       theme: {
         extend: {
           colors: {
-            "primary": "#259df4",
-            "background-dark": "#101a22",
-            "surface-container-low": "#13212c",
-            "surface-container": "#1c2c39",
-            "surface-container-high": "#243746",
-            "surface-container-highest": "#2d4354",
+            "primary": "#259df4", "background-dark": "#101a22",
+            "surface-container-low": "#13212c", "surface-container": "#1c2c39",
+            "surface-container-high": "#243746", "surface-container-highest": "#2d4354",
             "on-surface": "#f1f5f9",
           },
           fontFamily: { "headline": ["Inter"], "body": ["Inter"] },
@@ -34,13 +31,8 @@
 </head>
 <body class="bg-background-dark text-on-surface min-h-screen">
 
-  <!-- MOBILE SIDEBAR OVERLAY -->
-  <div id="sidebar-overlay"
-    class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"
-    onclick="closeSidebar()">
-  </div>
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden" onclick="closeSidebar()"></div>
 
-  <!-- SIDEBAR -->
   <aside id="sidebar"
     class="fixed left-0 top-0 h-full flex flex-col py-6 sm:py-8 bg-[#101a22] w-64 shadow-xl shadow-black z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
     <div class="px-6 mb-8 sm:mb-10">
@@ -52,7 +44,6 @@
       </div>
       <p class="text-[10px] sm:text-[11px] font-black tracking-widest uppercase text-slate-500">Admin Console</p>
     </div>
-
     <nav class="flex-1 space-y-1">
       <a onclick="closeSidebar()" class="flex items-center gap-4 px-6 py-3 sm:py-4 text-slate-500 hover:text-slate-300 transition-all font-['Inter'] text-[11px] font-black tracking-widest uppercase hover:bg-slate-800/30" href="/dashboard">
         <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
@@ -63,12 +54,10 @@
       <a onclick="closeSidebar()" class="flex items-center gap-4 px-6 py-3 sm:py-4 text-slate-500 hover:text-slate-300 transition-all font-['Inter'] text-[11px] font-black tracking-widest uppercase hover:bg-slate-800/30" href="/">
         <span class="material-symbols-outlined">how_to_reg</span><span>Check-In</span>
       </a>
-      <!-- History is active -->
       <a onclick="closeSidebar()" class="flex items-center gap-4 px-6 py-3 sm:py-4 text-[#259df4] bg-[#259df4]/10 border-r-4 border-[#259df4] font-['Inter'] text-[11px] font-black tracking-widest uppercase" href="/history">
         <span class="material-symbols-outlined">history</span><span>History</span>
       </a>
     </nav>
-
     <div class="px-6 mt-auto">
       <a href="/register" onclick="closeSidebar()"
         class="block w-full bg-primary text-white font-black text-[11px] tracking-widest uppercase py-3 sm:py-4 rounded-lg shadow-lg shadow-primary/20 hover:brightness-110 active:scale-95 transition-all text-center">
@@ -80,15 +69,11 @@
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <main class="lg:ml-64 flex-1 flex flex-col min-h-screen">
 
-    <!-- Top Bar -->
     <header class="h-14 sm:h-16 fixed top-0 right-0 left-0 lg:left-64 bg-[#101a22] flex justify-between items-center px-4 sm:px-8 z-40 shadow-sm shadow-blue-900/20">
       <div class="flex items-center gap-3">
-        <!-- Hamburger — mobile only -->
-        <button onclick="openSidebar()"
-          class="lg:hidden p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800">
+        <button onclick="openSidebar()" class="lg:hidden p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800">
           <span class="material-symbols-outlined">menu</span>
         </button>
         <div class="flex items-center gap-2">
@@ -108,29 +93,25 @@
 
     <section class="mt-14 sm:mt-16 p-4 sm:p-8 flex-1">
 
-      <!-- Page Title -->
       <div class="mb-6 sm:mb-8">
         <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tighter mb-2">Check-in History</h2>
         <p class="text-slate-400 font-medium text-sm sm:text-base">Complete record of all check-ins. Earnings resets do not affect this page.</p>
       </div>
 
-      <!-- SUMMARY CARDS — stack on mobile, 3 cols on sm+ -->
+      <!-- SUMMARY CARDS -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
-
         <div class="bg-surface-container-low rounded-xl p-4 sm:p-6 border border-slate-800 relative overflow-hidden">
           <p class="text-[10px] font-black tracking-widest uppercase text-slate-500 mb-2">Total Check-ins</p>
           <h4 class="text-3xl sm:text-4xl font-black text-white tracking-tighter">{{ total_checkins }}</h4>
           <p class="text-xs text-slate-500 mt-1">{% if date_from or date_to or search %}filtered{% else %}all time{% endif %}</p>
           <span class="material-symbols-outlined absolute -bottom-3 -right-3 text-primary opacity-10 text-7xl">how_to_reg</span>
         </div>
-
         <div class="bg-surface-container-low rounded-xl p-4 sm:p-6 border border-slate-800 relative overflow-hidden">
           <p class="text-[10px] font-black tracking-widest uppercase text-slate-500 mb-2">Total Earnings</p>
           <h4 class="text-3xl sm:text-4xl font-black text-primary tracking-tighter">₱{{ total_earnings }}</h4>
           <p class="text-xs text-slate-500 mt-1">at ₱50 per visit</p>
           <span class="material-symbols-outlined absolute -bottom-3 -right-3 text-primary opacity-10 text-7xl">payments</span>
         </div>
-
         <div class="bg-surface-container-low rounded-xl p-4 sm:p-6 border border-slate-800 flex flex-col justify-between">
           <div>
             <p class="text-[10px] font-black tracking-widest uppercase text-slate-500 mb-2">Export Data</p>
@@ -142,10 +123,9 @@
             Download CSV
           </a>
         </div>
-
       </div>
 
-      <!-- FILTERS BAR -->
+      <!-- FILTERS -->
       <form action="/history" method="GET" class="bg-surface-container-low rounded-xl p-4 sm:p-5 border border-slate-800 mb-4 sm:mb-6">
         <p class="text-[10px] font-black tracking-widest uppercase text-slate-500 mb-3 sm:mb-4">Filter Records</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -168,28 +148,24 @@
         <div class="flex gap-3 mt-3 sm:mt-4">
           <button type="submit"
             class="bg-primary text-white px-4 sm:px-6 py-2.5 rounded-lg font-black text-[11px] tracking-widest uppercase hover:opacity-90 transition-opacity flex items-center gap-2">
-            <span class="material-symbols-outlined text-sm">filter_list</span>
-            Apply
+            <span class="material-symbols-outlined text-sm">filter_list</span>Apply
           </button>
           {% if search or date_from or date_to %}
           <a href="/history"
             class="bg-slate-800 text-slate-300 px-4 sm:px-6 py-2.5 rounded-lg font-black text-[11px] tracking-widest uppercase hover:bg-slate-700 transition-colors flex items-center gap-2">
-            <span class="material-symbols-outlined text-sm">close</span>
-            Clear
+            <span class="material-symbols-outlined text-sm">close</span>Clear
           </a>
           {% endif %}
         </div>
       </form>
 
-      <!-- HISTORY TABLE — horizontal scroll on mobile -->
+      <!-- HISTORY TABLE -->
       <div class="bg-surface-container-low rounded-xl shadow-xl shadow-black overflow-hidden">
-
         {% if search or date_from or date_to %}
         <div class="px-4 sm:px-6 py-3 bg-primary/10 border-b border-primary/20 flex items-center gap-2">
           <span class="material-symbols-outlined text-primary text-sm">filter_alt</span>
           <span class="text-[10px] sm:text-[11px] font-black tracking-widest uppercase text-primary">
-            {{ total_checkins }} result{{ 's' if total_checkins != 1 else '' }}
-            {% if search %} — "{{ search }}"{% endif %}
+            {{ total_checkins }} result{{ 's' if total_checkins != 1 else '' }}{% if search %} — "{{ search }}"{% endif %}
           </span>
         </div>
         {% endif %}
@@ -208,7 +184,6 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-800/50">
-
               {% for log in logs %}
               <tr class="hover:bg-slate-800/30 transition-colors">
                 <td class="px-4 sm:px-6 py-3 sm:py-4 text-xs text-slate-600 font-mono">{{ loop.index }}</td>
@@ -227,16 +202,11 @@
                   <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black tracking-widest uppercase bg-slate-700 text-slate-400">Walk-in</span>
                   {% endif %}
                 </td>
-                <td class="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-mono text-slate-400 hidden sm:table-cell">
-                  {{ log.member_id if log.member_id else '—' }}
-                </td>
+                <td class="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-mono text-slate-400 hidden sm:table-cell">{{ log.member_id if log.member_id else '—' }}</td>
                 <td class="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-slate-300">{{ log.time_in.strftime('%b %d, %Y') }}</td>
                 <td class="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-slate-400 hidden sm:table-cell">{{ log.time_in.strftime('%I:%M %p') }}</td>
-                <td class="px-4 sm:px-6 py-3 sm:py-4 text-right">
-                  <span class="font-black text-primary text-xs sm:text-sm">₱{{ log.fee }}</span>
-                </td>
+                <td class="px-4 sm:px-6 py-3 sm:py-4 text-right"><span class="font-black text-primary text-xs sm:text-sm">₱{{ log.fee }}</span></td>
               </tr>
-
               {% else %}
               <tr>
                 <td colspan="7" class="px-6 py-16 sm:py-20 text-center">
@@ -250,17 +220,13 @@
                 </td>
               </tr>
               {% endfor %}
-
             </tbody>
           </table>
         </div>
 
-        <!-- Table Footer -->
         {% if logs %}
         <div class="px-4 sm:px-6 py-4 sm:py-5 bg-surface-container/50 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-          <p class="text-[10px] font-black tracking-widest uppercase text-slate-500">
-            {{ total_checkins }} record{{ 's' if total_checkins != 1 else '' }}
-          </p>
+          <p class="text-[10px] font-black tracking-widest uppercase text-slate-500">{{ total_checkins }} record{{ 's' if total_checkins != 1 else '' }}</p>
           <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 w-full sm:w-auto">
             <div class="flex gap-4 sm:gap-6">
               <div class="text-right">
@@ -274,8 +240,7 @@
             </div>
             <a href="/export-csv?search={{ search }}&date_from={{ date_from }}&date_to={{ date_to }}"
               class="flex items-center gap-2 bg-primary text-white px-4 sm:px-5 py-2.5 rounded-lg font-black text-[11px] tracking-widest uppercase hover:opacity-90 transition-opacity w-full sm:w-auto justify-center">
-              <span class="material-symbols-outlined text-sm">download</span>
-              Export CSV
+              <span class="material-symbols-outlined text-sm">download</span>Export CSV
             </a>
           </div>
         </div>
@@ -286,6 +251,13 @@
     </section>
   </main>
 
+  <!-- FLOATING FULLSCREEN BUTTON -->
+  <button id="fs-float-btn"
+    style="display:none;position:fixed;bottom:20px;right:20px;z-index:9999;background:rgba(37,157,244,0.92);color:white;border:none;border-radius:999px;padding:10px 18px;gap:6px;align-items:center;cursor:pointer;box-shadow:0 4px 16px rgba(37,157,244,0.45);font-family:Inter,sans-serif;font-weight:900;letter-spacing:0.05em;text-transform:uppercase;font-size:11px;transition:transform 0.15s;"
+    onmouseover="this.style.transform='scale(1.05)'"
+    onmouseout="this.style.transform='scale(1)'">
+  </button>
+
   <script>
     function openSidebar() {
       document.getElementById('sidebar').classList.remove('-translate-x-full');
@@ -295,6 +267,43 @@
       document.getElementById('sidebar').classList.add('-translate-x-full');
       document.getElementById('sidebar-overlay').classList.add('hidden');
     }
+
+    (function() {
+      var FS_KEY = 'rico_fullscreen';
+      function inFS() { return !!document.fullscreenElement; }
+
+      window.enterFullscreen = function() {
+        document.documentElement.requestFullscreen()
+          .then(function() { localStorage.setItem(FS_KEY, '1'); _syncUI(); })
+          .catch(function() {});
+      };
+      window.exitFullscreen = function() {
+        document.exitFullscreen()
+          .then(function() { localStorage.setItem(FS_KEY, '0'); _syncUI(); })
+          .catch(function() {});
+      };
+
+      function _syncUI() {
+        var active = inFS();
+        var pref   = localStorage.getItem(FS_KEY) === '1';
+        var btn    = document.getElementById('fs-float-btn');
+        if (!btn) return;
+        if (active) {
+          btn.style.display = 'flex';
+          btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;line-height:1">fullscreen_exit</span><span>Exit Fullscreen</span>';
+          btn.onclick = window.exitFullscreen;
+        } else if (pref) {
+          btn.style.display = 'flex';
+          btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;line-height:1">fullscreen</span><span>Fullscreen</span>';
+          btn.onclick = window.enterFullscreen;
+        } else {
+          btn.style.display = 'none';
+        }
+      }
+
+      document.addEventListener('fullscreenchange', _syncUI);
+      document.addEventListener('DOMContentLoaded', _syncUI);
+    })();
   </script>
 
 </body>

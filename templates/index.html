@@ -65,7 +65,7 @@
         <span class="text-xs font-semibold text-slate-500 uppercase tracking-widest">Gym Status</span>
         <span id="gym-status" class="text-sm font-bold flex items-center gap-1"></span>
       </div>
-      <!-- Fullscreen Button — hidden on mobile since it's less useful there -->
+      <!-- Header fullscreen toggle — desktop only -->
       <button onclick="toggleFullscreen()"
         id="fullscreen-btn"
         title="Toggle Fullscreen"
@@ -126,23 +126,18 @@
 
     {% else %}
     <!-- CHECK-IN SCREEN -->
-
-    <!-- Clock — scaled down for mobile, landscape adjustments -->
     <div class="text-center mb-6 sm:mb-12 w-full">
       <div class="flex flex-col items-center gap-1 sm:gap-2">
         <p id="live-date" class="text-sm sm:text-xl font-bold text-primary uppercase tracking-[0.15em] sm:tracking-[0.2em]"></p>
         <div class="flex items-baseline gap-1 sm:gap-2">
-          <!-- Responsive clock size: small on mobile, large on desktop -->
           <span id="live-time" class="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter"></span>
           <span id="live-ampm" class="text-xl sm:text-3xl font-bold text-slate-500"></span>
         </div>
       </div>
-      <!-- Hide tagline on landscape mobile to save vertical space -->
       <h1 class="text-2xl sm:text-3xl lg:text-5xl font-black mt-4 sm:mt-8 tracking-tight leading-tight">Ready for your workout?</h1>
       <p class="text-slate-500 dark:text-slate-400 mt-1 sm:mt-2 text-base sm:text-lg hidden sm:block">Enter your name below to begin your session.</p>
     </div>
 
-    <!-- Inline success banner -->
     {% if success_name %}
     <div class="w-full mb-6 sm:mb-8">
       <div class="bg-primary/10 border-2 border-primary/30 rounded-xl p-4 sm:p-6 flex items-center gap-3 sm:gap-6">
@@ -157,7 +152,6 @@
     </div>
     {% endif %}
 
-    <!-- Check-in Form -->
     <form action="/" method="POST" class="w-full space-y-4 sm:space-y-6">
       <div class="relative group">
         <label class="block text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-500 mb-2 sm:mb-3 ml-1">
@@ -177,7 +171,6 @@
           />
         </div>
       </div>
-
       <button type="submit"
         class="w-full bg-primary hover:bg-primary/90 text-white py-4 sm:py-6 rounded-2xl text-xl sm:text-2xl font-black shadow-xl shadow-primary/20 transform hover:scale-[1.01] transition-all flex items-center justify-center gap-2 sm:gap-3">
         <span class="material-symbols-outlined text-2xl sm:text-3xl">login</span>
@@ -185,7 +178,6 @@
       </button>
     </form>
 
-    <!-- Info Cards — stack on mobile, 3 columns on md+ -->
     <div class="mt-6 sm:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 w-full">
       <div class="bg-slate-100 dark:bg-slate-900/50 p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-3 sm:gap-4">
         <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg text-xl">payments</span>
@@ -214,12 +206,10 @@
 
   </main>
 
-  <!-- FOOTER -->
   <footer class="py-4 sm:py-8 px-4 sm:px-6 lg:px-20 border-t border-slate-200 dark:border-slate-800">
     <p class="text-xs sm:text-sm text-slate-500 font-medium text-center">© 2026 Rico Gym. All rights reserved.</p>
   </footer>
 
-  <!-- Background Decoration -->
   <div class="fixed top-0 right-0 -z-10 opacity-10 blur-3xl pointer-events-none">
     <div class="bg-primary size-[300px] sm:size-[500px] rounded-full"></div>
   </div>
@@ -227,58 +217,128 @@
     <div class="bg-primary size-[250px] sm:size-[400px] rounded-full"></div>
   </div>
 
+  <!-- ================================ -->
+  <!-- FLOATING FULLSCREEN BUTTON       -->
+  <!-- Shown when: in fullscreen OR     -->
+  <!-- pref=true but not in fullscreen  -->
+  <!-- ================================ -->
+  <button id="fs-float-btn"
+    style="display:none;position:fixed;bottom:20px;right:20px;z-index:9999;background:rgba(37,157,244,0.92);color:white;border:none;border-radius:999px;padding:10px 18px;gap:6px;align-items:center;cursor:pointer;box-shadow:0 4px 16px rgba(37,157,244,0.45);font-family:Inter,sans-serif;font-weight:900;letter-spacing:0.05em;text-transform:uppercase;font-size:11px;transition:transform 0.15s,opacity 0.15s;"
+    onmouseover="this.style.transform='scale(1.05)'"
+    onmouseout="this.style.transform='scale(1)'">
+  </button>
+
   <script>
+    // ============================================
+    // FULLSCREEN MEMORY SYSTEM
+    // Works across all pages via localStorage
+    // ============================================
+    (function() {
+      var FS_KEY = 'rico_fullscreen';
+
+      function inFS() {
+        return !!document.fullscreenElement;
+      }
+
+      window.enterFullscreen = function() {
+        document.documentElement.requestFullscreen()
+          .then(function() {
+            localStorage.setItem(FS_KEY, '1');
+            _syncUI();
+          }).catch(function() {});
+      };
+
+      window.exitFullscreen = function() {
+        document.exitFullscreen()
+          .then(function() {
+            localStorage.setItem(FS_KEY, '0');
+            _syncUI();
+          }).catch(function() {});
+      };
+
+      // Called by the header button on this page
+      window.toggleFullscreen = function() {
+        inFS() ? window.exitFullscreen() : window.enterFullscreen();
+      };
+
+      function _syncUI() {
+        var active = inFS();
+        var pref   = localStorage.getItem(FS_KEY) === '1';
+        var btn    = document.getElementById('fs-float-btn');
+        var icon   = document.getElementById('fullscreen-icon');
+
+        // Update header toggle icon
+        if (icon) icon.textContent = active ? 'fullscreen_exit' : 'fullscreen';
+
+        // Update floating button
+        if (btn) {
+          if (active) {
+            // In fullscreen — show Exit button
+            btn.style.display = 'flex';
+            btn.innerHTML =
+              '<span class="material-symbols-outlined" style="font-size:18px;line-height:1">fullscreen_exit</span>' +
+              '<span>Exit Fullscreen</span>';
+            btn.onclick = window.exitFullscreen;
+          } else if (pref) {
+            // Not in fullscreen but was before — show Resume button
+            btn.style.display = 'flex';
+            btn.innerHTML =
+              '<span class="material-symbols-outlined" style="font-size:18px;line-height:1">fullscreen</span>' +
+              '<span>Fullscreen</span>';
+            btn.onclick = window.enterFullscreen;
+          } else {
+            // Never used fullscreen — hide button
+            btn.style.display = 'none';
+          }
+        }
+      }
+
+      // Sync when fullscreen state changes (e.g. user presses Escape)
+      document.addEventListener('fullscreenchange', function() {
+        _syncUI();
+      });
+
+      // Sync on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        _syncUI();
+      });
+    })();
+
+    // ============================================
+    // LIVE CLOCK + GYM STATUS
+    // ============================================
     function updateClock() {
-      const now    = new Date();
-      const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-      const months = ['January','February','March','April','May','June','July',
-                      'August','September','October','November','December'];
+      var now    = new Date();
+      var days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      var months = ['January','February','March','April','May','June','July',
+                    'August','September','October','November','December'];
+      var dayName = days[now.getDay()];
+      var month   = months[now.getMonth()];
+      var date    = now.getDate();
+      var hours   = now.getHours();
+      var minutes = String(now.getMinutes()).padStart(2, '0');
+      var ampm    = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
 
-      const dayName = days[now.getDay()];
-      const month   = months[now.getMonth()];
-      const date    = now.getDate();
-      let hours     = now.getHours();
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      const ampm    = hours >= 12 ? 'PM' : 'AM';
-      hours         = hours % 12 || 12;
-
-      const dateEl = document.getElementById('live-date');
-      const timeEl = document.getElementById('live-time');
-      const ampmEl = document.getElementById('live-ampm');
-      if (dateEl) dateEl.textContent = `${dayName}, ${month} ${date}`;
-      if (timeEl) timeEl.textContent = `${hours}:${minutes}`;
+      var dateEl = document.getElementById('live-date');
+      var timeEl = document.getElementById('live-time');
+      var ampmEl = document.getElementById('live-ampm');
+      if (dateEl) dateEl.textContent = dayName + ', ' + month + ' ' + date;
+      if (timeEl) timeEl.textContent = hours + ':' + minutes;
       if (ampmEl) ampmEl.textContent = ampm;
 
-      const hour     = now.getHours();
-      const isOpen   = hour >= 7 && hour < 22;
-      const statusEl = document.getElementById('gym-status');
+      var hour     = now.getHours();
+      var isOpen   = hour >= 7 && hour < 22;
+      var statusEl = document.getElementById('gym-status');
       if (statusEl) {
         statusEl.innerHTML = isOpen
-          ? '<span class="size-2 bg-green-500 rounded-full mr-1 inline-block"></span><span class="text-green-500">OPEN</span>'
-          : '<span class="size-2 bg-red-500 rounded-full mr-1 inline-block"></span><span class="text-red-500">CLOSED</span>';
+          ? '<span style="width:8px;height:8px;background:#22c55e;border-radius:50%;display:inline-block;margin-right:4px"></span><span style="color:#22c55e">OPEN</span>'
+          : '<span style="width:8px;height:8px;background:#ef4444;border-radius:50%;display:inline-block;margin-right:4px"></span><span style="color:#ef4444">CLOSED</span>';
       }
     }
 
     updateClock();
     setInterval(updateClock, 1000);
-
-    function toggleFullscreen() {
-      const icon = document.getElementById('fullscreen-icon');
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().then(() => {
-          if (icon) icon.textContent = 'fullscreen_exit';
-        });
-      } else {
-        document.exitFullscreen().then(() => {
-          if (icon) icon.textContent = 'fullscreen';
-        });
-      }
-    }
-
-    document.addEventListener('fullscreenchange', () => {
-      const icon = document.getElementById('fullscreen-icon');
-      if (icon) icon.textContent = document.fullscreenElement ? 'fullscreen_exit' : 'fullscreen';
-    });
   </script>
 
 </body>
